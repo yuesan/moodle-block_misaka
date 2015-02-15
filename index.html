@@ -32,6 +32,11 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h1>
+<a id="注意" class="anchor" href="#%E6%B3%A8%E6%84%8F" aria-hidden="true"><span class="octicon octicon-link"></span></a>注意</h1>
+
+<p>α版のプラグインです。本番稼働のMoodleには入れないでください！</p>
+
+<h1>
 <a id="あなたのmoodleを明るくするコンシエルジュプラグイン" class="anchor" href="#%E3%81%82%E3%81%AA%E3%81%9F%E3%81%AEmoodle%E3%82%92%E6%98%8E%E3%82%8B%E3%81%8F%E3%81%99%E3%82%8B%E3%82%B3%E3%83%B3%E3%82%B7%E3%82%A8%E3%83%AB%E3%82%B8%E3%83%A5%E3%83%97%E3%83%A9%E3%82%B0%E3%82%A4%E3%83%B3" aria-hidden="true"><span class="octicon octicon-link"></span></a>あなたのMoodleを明るくする！コンシエルジュプラグイン</h1>
 
 <p>学生・先生が日々使うMoodle。ほとんどのMoodleは無味乾燥な画面(Moodleの標準テーマ)でお使いでは無いでしょうか。
@@ -43,9 +48,21 @@
 
 <p>Moodle上のログデータを集計し、ユーザー1人1人に合ったアドバイスをします。</p>
 
+<p><img src="images/1.jpg" alt="1"></p>
+
 <p>アクティビティが活発な場合はコンシェルジュのアイコンが笑顔に変化します。</p>
 
 <p>どのようなメッセージが出るかはその時次第ですが、学生をひたすらに「ほめる」ことに重点を置いたメッセージが表示されます。</p>
+
+<h1>
+<a id="仕組み" class="anchor" href="#%E4%BB%95%E7%B5%84%E3%81%BF" aria-hidden="true"><span class="octicon octicon-link"></span></a>仕組み</h1>
+
+<p>メッセージは1時間に1回更新されます。Moodleサーバへの負荷を抑えるため、リアルタイムでのメッセージ生成はしないようにしています。
+生成されたメッセージはデータベースに保存し、次の更新までは生成済みのメッセージを表示させるようにしています。</p>
+
+<p>Moodleのログテーブルには「いつ」「だれが」「なにをした」が記録されており、Misakaではこのデータを基にメッセージを生成しています。</p>
+
+<p>生成ルールも含めて、開発を進めています。</p>
 
 <h1>
 <a id="インストール方法" class="anchor" href="#%E3%82%A4%E3%83%B3%E3%82%B9%E3%83%88%E3%83%BC%E3%83%AB%E6%96%B9%E6%B3%95" aria-hidden="true"><span class="octicon octicon-link"></span></a>インストール方法</h1>

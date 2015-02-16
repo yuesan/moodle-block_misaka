@@ -11,10 +11,12 @@ class message
 {
     function __construct($context){
         $this->context = $context;
+        $this->message_text = "";
     }
 
     function generate(){
         $message_text = "";
+        $message_score = 0;
         $messages = [];
 
         $greeting_obj = new greeting();
@@ -25,9 +27,14 @@ class message
 
         foreach($messages as $message){
             $message_text .= $message->text . '<hr>';
+            $message_score += $message->score;
         }
 
-        return $message_text;
+        $message = new \stdClass();
+        $message->text = $message_text;
+        $message->score = $message_score;
+
+        return $message;
     }
 
     function count_action($component, $target)
@@ -45,5 +52,10 @@ class message
         );
 
         return $count_login;
+    }
+
+    function set_message()
+    {
+
     }
 }

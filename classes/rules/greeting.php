@@ -24,10 +24,12 @@ class greeting extends message{
         );
 
         if($count_login == 0){
-            $message->text = "おひさしぶりです！<hr>";
+            $message->text = "おひさしぶりです！最近お会いしていなかったので、うれしいです！";
         }else{
             $message->text = "こんにちは！" . "最近3日間で" . $count_login . '回お会いしましたね！';
         }
+
+        $this->message_text = $message->text;
 
         $message->type = 1;
 

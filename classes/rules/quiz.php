@@ -14,7 +14,7 @@ class quiz extends message{
 
     public function get()
     {
-        global $USER;
+        global $USER, $CFG;
 
         $message = new \stdClass();
 
@@ -38,7 +38,8 @@ class quiz extends message{
                 }
             }else{
                 $message->text .= "そしてあなたは今まで" . $c . "回小テストを終わらせました！<br>";
-                $message->text .= "その調子です！";
+                $message->text .= "その調子です！<br>";
+                $message->text .= \html_writer::empty_tag('image', ['src' => new \moodle_url($CFG->wwwroot . '/blocks/misaka/images/quiz/stump01-002.gif')]);
                 $message->score = 1;
             }
         }else{

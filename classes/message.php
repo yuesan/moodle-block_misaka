@@ -15,6 +15,16 @@ class message
     }
 
     function generate(){
+        global $USER;
+
+        if($USER->id == 0){
+            $message = new \stdClass();
+            $message->score = 0;
+            $message_text = null;
+
+            return $message;
+        }
+
         $message_text = "";
         $message_score = 0;
         $messages = [];

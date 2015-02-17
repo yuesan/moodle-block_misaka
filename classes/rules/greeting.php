@@ -31,7 +31,7 @@ class greeting extends message{
 
         $this->message_text = $message->text;
 
-        $message->type = 1;
+        $message->score = 1;
 
         return $message;
     }

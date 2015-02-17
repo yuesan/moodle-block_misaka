@@ -34,7 +34,7 @@ class block_misaka extends block_base
 
     function get_content()
     {
-        global $USER, $CFG;
+        global $USER, $CFG, $PAGE;
 
         if (empty($this->instance)) {
             $this->content = '';
@@ -43,8 +43,8 @@ class block_misaka extends block_base
         }
 
         $this->content = new stdClass();
-        $this->content->items = array();
-        $this->content->icons = array();
+        $this->content->items = [];
+        $this->content->icons = [];
         $this->content->footer = '';
 
         $courseid = $this->page->course->id;
@@ -56,9 +56,11 @@ class block_misaka extends block_base
 
             $html = html_writer::start_div('', ['style' => 'text-align:center;', 'id' => 'misaka_shiromu']);
             if ($message->score >= 1) {
-                $html .= html_writer::empty_tag('img', ['src' => new moodle_url('blocks/misaka/images/smile.jpg'), 'class' => 'img-circle']);
+                $html .= html_writer::empty_tag('img', ['src' => new moodle_url('blocks/misaka/images/srm02.jpg'), 'class' => 'img-circle', 'data-toggle' => 'modal']);
+            }elseif($message->score == 0){
+                $html .= html_writer::empty_tag('img', ['src' => new moodle_url('blocks/misaka/images/srm01.jpg'), 'class' => 'img-circle', 'data-toggle' => 'modal']);
             } else {
-                $html .= html_writer::empty_tag('img', ['src' => new moodle_url('blocks/misaka/images/normal.jpg'), 'class' => 'img-circle']);
+                $html .= html_writer::empty_tag('img', ['src' => new moodle_url('blocks/misaka/images/srm05.jpg'), 'class' => 'img-circle', 'data-toggle' => 'modal']);
             }
             $html .= html_writer::end_div();
 
@@ -75,13 +77,31 @@ class block_misaka extends block_base
                 $html .= html_writer::tag('h3', '今日のアドバイス！', ['class' => 'popover-title']);
                 $html .= html_writer::start_div('popover-content');
                 $html .= html_writer::tag('p', $message->text);
+                $html .= html_writer::start_tag('blockquote');
                 $html .= html_writer::div('', '', ['id' => 'misaka_speech_area']);
+                $html .= html_writer::end_tag('blockquote');
+
+                $PAGE->requires->jquery();
+                $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/misaka/js/bootstrap.min.js'));
+                $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/misaka/js/speech.js'));
             }
 
             $html .= html_writer::end_div();
             $html .= html_writer::end_div();
 
-            $html .= html_writer::script('', new moodle_url($CFG->wwwroot . '/blocks/misaka/js/speech.js'));
+            $html .= html_writer::start_div('modal hide fade', ['id' => 'speech_modal', 'tabindex' => '-1', 'role' => 'dialog', 'aria-hidden' => 'true', 'aria-labelledby' => 'speech_modal_header']);
+            $html .= html_writer::start_div('modal-header', ['id' => 'speech_modal_header']);
+            $html .= html_writer::tag('button', '&times;', ['class' => 'close', 'type' => 'button', 'data-dismiss' => 'modal', 'aria-hidden' => 'true']);
+            $html .= html_writer::tag('h3', 'お話しください');
+            $html .= html_writer::end_div();
+            $html .= html_writer::start_div('modal-body', ['style' => 'text-align:center;']);
+            $html .= html_writer::empty_tag('img', ['src' => new moodle_url('blocks/misaka/images/srm01.jpg'), 'class' => 'img-circle', 'data-toggle' => 'modal']);
+            $html .= html_writer::tag('h5', 'ブラウザ上部の「許可」ボタンをクリックして、マイクに向かってお話しください。');
+            $html .= html_writer::end_div();
+            $html .= html_writer::start_div('modal-footer');
+            $html .= html_writer::link(new moodle_url('#'), '終了', ['class' => 'btn', 'id' => 'speech_finish_btn']);
+            $html .= html_writer::end_div();
+            $html .= html_writer::end_div();
 
             return $this->content = (object)['text' => $html];
 

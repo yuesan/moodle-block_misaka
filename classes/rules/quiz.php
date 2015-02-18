@@ -29,8 +29,7 @@ class quiz extends message{
                 $quiz = $this->get_finished();
 
                 if($quiz){
-                    $message->text .= "過去に受験した小テストをふりかえってみましょう！<br>";
-                    $message->text .= \html_writer::link(new \moodle_url('mod/quiz/view.php', ['id' => $quiz->id]), '小テストをふりかえり', ['btn btn-success']);
+                    echo $this->review($quiz);
                     $message->score = 0;
                 }else{
                     $message->text .= "";
@@ -39,11 +38,44 @@ class quiz extends message{
             }else{
                 $message->text .= "そしてあなたは今まで" . $c . "回小テストを終わらせました！<br>";
                 $message->text .= "その調子です！<br>";
+                $message->text .= \html_writer::start_div('', ['style' => 'text-align:center;']);
                 $message->text .= \html_writer::empty_tag('image', ['src' => new \moodle_url($CFG->wwwroot . '/blocks/misaka/images/quiz/stump01-002.gif')]);
+                $message->text .= \html_writer::end_div();
+
+                $quiz = $this->get_finished();
+
+                if($quiz){
+                    $message->text .= $this->review($quiz);
+
+                    $message->score = 0;
+                }else{
+                    $message->text .= "";
+                    $message->score = 0;
+                }
+
                 $message->score = 1;
             }
         }else{
-            $message->text = null;
+            $courses = enrol_get_my_courses();
+            $quiz_obj = new \block_misaka\quiz();
+
+            $show_quizzes = [];
+            foreach($courses as $course){
+                $quizzes = $quiz_obj->quizzes($course->id);
+                foreach($quizzes as $quiz){
+                    if($quiz->timeclose > time()){
+                        $show_quizzes[] = $quiz->id;
+                    }
+                }
+            }
+
+            $show_quiz = array_rand($show_quizzes);
+            $quiz_obj = \block_misaka\quiz::quiz($show_quiz);
+            $modinfo = modinfo($show_quiz->courseid)->instances['quiz'][$show_quiz->id];
+
+            $url = new \moodle_url($CFG->wwwroot . '/mod/quiz/view.php', ['id' => $modinfo->id]);
+
+            $message->text = $url;
             $message->score = 0;
         }
 
@@ -57,7 +89,25 @@ class quiz extends message{
         $quiz_obj = new \block_misaka\quiz();
 
         $quiz = $quiz_obj->recent_finished($USER->id);
+        if(count($quiz) > 1){
+            $key = array_rand($quiz);
+            return $quiz[$key];
+        }else{
+            return $quiz;
+        }
+    }
 
-        return array_rand($quiz);
+    private function review($quiz)
+    {
+        $cm = get_coursemodule_from_instance('quiz', $quiz->qid, $quiz->course);
+
+        $message = "";
+
+        $message .= "過去に受験した小テストをふりかえってみましょう。<br>";
+        $message .= \html_writer::start_div('', ['style' => 'text-align:center;']);
+        $message .= \html_writer::link(new \moodle_url('mod/quiz/view.php', ['id' => $cm->id]), '小テストをふりかえり', ['class' => 'btn btn-success']);
+        $message .= \html_writer::end_div();
+
+        return $message;
     }
 }

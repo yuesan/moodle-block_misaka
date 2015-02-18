@@ -4,14 +4,16 @@ namespace block_misaka;
 
 use block_misaka\rules\greeting;
 use block_misaka\rules\quiz;
+use block_misaka\rules\weather;
 
 defined('MOODLE_INTERNAL') || die();
 
 class message
 {
+    public $message_text;
+
     function __construct($context){
         $this->context = $context;
-        $this->message_text = "";
     }
 
     function generate(){
@@ -34,6 +36,9 @@ class message
 
         $quiz_obj = new quiz();
         $messages[] = $quiz_obj->get();
+
+        $weather_obj = new weather();
+        $messages[] = $weather_obj->get();
 
         foreach($messages as $message){
             $message_text .= $message->text . '<hr>';

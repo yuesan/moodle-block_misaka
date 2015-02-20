@@ -71,7 +71,7 @@ class quiz extends message{
 
             $show_quiz = array_rand($show_quizzes);
             $quiz_obj = \block_misaka\quiz::quiz($show_quiz);
-            $modinfo = modinfo($show_quiz->courseid)->instances['quiz'][$show_quiz->id];
+            $modinfo = \modinfo($show_quiz->courseid)->instances['quiz'][$show_quiz->id];
 
             $url = new \moodle_url($CFG->wwwroot . '/mod/quiz/view.php', ['id' => $modinfo->id]);
 

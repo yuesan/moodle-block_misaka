@@ -70,10 +70,19 @@ class quiz extends message{
             }
 
             $show_quiz = array_rand($show_quizzes);
-            $quiz_obj = \block_misaka\quiz::quiz($show_quiz);
-            $modinfo = modinfo($show_quiz->courseid)->instances['quiz'][$show_quiz->id];
 
-            $url = new \moodle_url($CFG->wwwroot . '/mod/quiz/view.php', ['id' => $modinfo->id]);
+            if(is_null($show_quiz)){
+                $message->text = "";
+                $message->score = 0;
+
+                return $message;
+            }
+
+            $quiz = \block_misaka\quiz::quiz($show_quiz);
+
+            $cm = get_coursemodule_from_instance('quiz', $quiz->id, $quiz->course);
+
+            $url = new \moodle_url($CFG->wwwroot . '/mod/quiz/view.php', ['id' => $cm->id]);
 
             $message->text = $url;
             $message->score = 0;

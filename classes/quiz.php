@@ -21,7 +21,8 @@ class quiz
         return $quizzes;
     }
 
-    public static function count_quizzes($courseid){
+    public static function count_quizzes($courseid)
+    {
         global $DB;
         $quizzes = $DB->count_records('quiz', array('course' => $courseid));
 
@@ -127,7 +128,8 @@ class quiz
         return $result;
     }
 
-    public static function count_finished_attempts($userid, $courseid){
+    public static function count_finished_attempts($userid, $courseid)
+    {
         global $DB;
         $sql = "SELECT COUNT(*)
                 FROM {quiz_attempts} as qa
@@ -144,7 +146,9 @@ class quiz
     public static function count_attemts($userid, $quizid)
     {
         global $DB;
-        $count_attempts = $DB->count_records('quiz_attempts', array('quiz' => $quizid, 'state' => 'finished', 'userid' => $userid), 'id', 'id, quiz, userid, attempt, rawgrade');
+        $count_attempts = $DB->count_records(
+            'quiz_attempts', array('quiz' => $quizid, 'state' => 'finished', 'userid' => $userid)
+        );
 
         return $count_attempts;
     }
@@ -152,7 +156,7 @@ class quiz
     public static function count_students($quiz)
     {
         global $DB;
-        $attempts = $DB->count_records('quiz_attempts', array('quiz' => $quiz->id, 'state' => 'finished'), 'id', 'id, quiz, userid, attempt');
+        $attempts = $DB->count_records('quiz_attempts', array('quiz' => $quiz->id, 'state' => 'finished'));
 
         quiz_get_user_grades($quiz);
 
@@ -206,7 +210,8 @@ class quiz
         return null;
     }
 
-    public static function unfinish($userid, $courseid){
+    public static function unfinish($userid, $courseid)
+    {
         $count_quizzes = quiz::count_quizzes($courseid);
         $count_attemts = quiz::count_finished_attempts($userid, $courseid);
 

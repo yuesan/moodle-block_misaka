@@ -22,4 +22,16 @@ class html_writer extends \html_writer
         return html_writer::empty_tag('img', ['src' => new \moodle_url('blocks/misaka/images/srm05.jpg'),
             'class' => 'img-circle', 'data-toggle' => 'modal']);
     }
+
+    public static function card($message)
+    {
+        $html = html_writer::start_div('popover bottom show', ['style' => 'position:relative; max-width:100%;']);
+        $html .= html_writer::tag('h3', $message->title, ['class' => 'popover-title']);
+        $html .= html_writer::start_div('popover-content');
+        $html .= html_writer::tag('p', $message->text);
+        $html .= html_writer::end_div();
+        $html .= html_writer::end_div();
+
+        return $html;
+    }
 }

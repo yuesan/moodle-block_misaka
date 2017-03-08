@@ -37,7 +37,6 @@ class block_misaka extends block_base
 
         if (empty($this->instance)) {
             $this->content = '';
-
             return $this->content;
         }
 
@@ -49,46 +48,36 @@ class block_misaka extends block_base
         $courseid = $this->page->course->id;
         $context = context_course::instance($courseid);
 
+        $PAGE->requires->jquery();
+        $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/misaka/js/bootstrap.min.js'));
+
         try {
-            $message_obj = new \block_misaka\message($context);
-            $message = $message_obj->generate();
-
-            $html = html_writer::start_div('', ['style' => 'text-align:center;', 'id' => 'misaka_shiromu']);
-            if ($message->score >= 1) {
-                $html .= \block_misaka\html_writer::emotion_smile();
-            } elseif ($message->score == 0) {
-                $html .= \block_misaka\html_writer::emotion_normal();
-            } else {
-                $html .= \block_misaka\html_writer::emotion_sad();
-            }
-            $html .= html_writer::end_div();
-
-            $html .= html_writer::start_div('popover bottom show', ['style' => 'position:relative; max-width:100%;']);
-
-            $html .= html_writer::start_div('arrow');
-            $html .= html_writer::end_div();
-
+            $message_obj = new \block_misaka\messages($context);
+            $messages = $message_obj->gets();
             if ($USER->id == 0) {
+                $html = html_writer::start_div('', ['style' => 'text-align:center;', 'id' => 'misaka_shiromu']);
+                $html .= \block_misaka\html_writer::emotion_smile();
+                $html .= html_writer::end_div();
+                $html .= html_writer::start_div('popover bottom show', ['style' => 'position:relative; max-width:100%;']);
+                $html .= html_writer::start_div('arrow');
+                $html .= html_writer::end_div();
                 $html .= html_writer::tag('h3', 'こんにちは！', ['class' => 'popover-title']);
                 $html .= html_writer::start_div('popover-content');
                 $html .= html_writer::tag('p', 'ログインすると、私があなたをサポートします！');
+                $html .= html_writer::end_div();
+                $html .= html_writer::end_div();
+
+                return $this->content = (object)['text' => $html];
             } else {
-                $html .= html_writer::tag('h3', '今日のアドバイス！', ['class' => 'popover-title']);
-                $html .= html_writer::start_div('popover-content');
-                $html .= html_writer::tag('p', $message->text);
-                $html .= html_writer::start_tag('blockquote');
-                $html .= html_writer::div('', '', ['id' => 'misaka_speech_area']);
-                $html .= html_writer::end_tag('blockquote');
+                $html = html_writer::start_div('', ['style' => 'text-align:center;', 'id' => 'misaka_shiromu']);
+                $html .= \block_misaka\html_writer::emotion_smile();
+                $html .= html_writer::end_div();
+                foreach ($messages as $message) {
+                    $html .= \block_misaka\html_writer::card($message);
+                }
 
-                $PAGE->requires->jquery();
-                $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/misaka/js/bootstrap.min.js'));
+                return $this->content = (object)['text' => $html];
             }
-
-            $html .= html_writer::end_div();
-            $html .= html_writer::end_div();
-
-            return $this->content = (object)['text' => $html];
-
         } catch (Exception $e) {
             $html = "Misakaの起動に失敗しました。";
             return $this->content = (object)['text' => $html];
@@ -99,16 +88,12 @@ class block_misaka extends block_base
     {
         return array('all' => false,
             'site' => true,
-            'site-index' => true,
-            'course-view' => true,
-            'course-view-social' => false,
-            'mod' => true,
-            'mod-quiz' => false);
+        );
     }
 
     public function instance_allow_multiple()
     {
-        return true;
+        return false;
     }
 
     function has_config()
@@ -118,10 +103,6 @@ class block_misaka extends block_base
 
     public function cron()
     {
-        mtrace("Hey, my cron script is running");
-
-        // do something
-
         return true;
     }
 }

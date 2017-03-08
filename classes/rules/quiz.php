@@ -2,19 +2,20 @@
 
 namespace block_misaka\rules;
 
-use block_misaka\message;
+use block_misaka\util;
 
 define('COMPONENT', 'mod_quiz');
 
-class quiz extends message
+class quiz
 {
     public function get()
     {
         global $USER, $CFG;
 
         $message = new \stdClass();
+        $message->title = "小テスト";
 
-        $c = $this->count_action(COMPONENT, 'attempt');
+        $c = util::count_action(COMPONENT, 'attempt');
 
         if ($c != 0) {
             $message->text = "<p>あなたは最近、小テストに" . $c . "回挑戦しています。</p>";

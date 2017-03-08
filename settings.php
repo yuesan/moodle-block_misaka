@@ -23,12 +23,3 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
-
-$settings->add(new admin_setting_heading('sampleheader',
-                                         get_string('headerconfig', 'block_misaka'),
-                                         get_string('descconfig', 'block_misaka')));
-
-$settings->add(new admin_setting_configcheckbox('misaka/foo',
-                                                get_string('labelfoo', 'block_misaka'),
-                                                get_string('descfoo', 'block_misaka'),
-                                                '0'));

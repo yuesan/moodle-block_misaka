@@ -1,18 +1,21 @@
 <?php
+
+/**
+ * オープンソース版MISAKAルール
+ */
+
 namespace block_misaka\rules;
 
 defined('MOODLE_INTERNAL') || die();
 
-use block_misaka\message;
-
-class greeting extends message
+class greeting
 {
     public function get()
     {
         global $DB, $USER;
-
         $message = new \stdClass();
 
+        $message->title = "今日のアドバイス！";
         $count_login = $DB->count_records_sql(
             "SELECT COUNT('id') FROM {logstore_standard_log}
               WHERE userid = :userid AND timecreated > (UNIX_TIMESTAMP(NOW()) - 259200) AND action = 'loggedin';

@@ -7,8 +7,6 @@ class util
 {
     public static function get_rule_classes()
     {
-        global $CFG;
-
         $files = [];
         foreach (glob(__DIR__ . '/rules/{*.php}', GLOB_BRACE) as $file) {
             if (is_file($file)) {
@@ -18,5 +16,21 @@ class util
             }
         }
         return $files;
+    }
+
+
+    public static function count_action($component, $target)
+    {
+        global $DB, $USER;
+        $count_login = $DB->count_records_sql(
+            "SELECT COUNT('id') FROM {logstore_standard_log}
+              WHERE userid = :userid
+                AND timecreated > (UNIX_TIMESTAMP(NOW()) - 259200)
+                AND component = :component
+                AND target = :target;
+             "
+            , ['userid' => $USER->id, 'component' => $component, 'target' => $target]
+        );
+        return $count_login;
     }
 }

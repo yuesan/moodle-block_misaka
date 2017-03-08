@@ -35,6 +35,9 @@ class block_misaka extends block_base
     {
         global $USER, $CFG, $PAGE;
 
+        $PAGE->requires->jquery();
+        $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/misaka/js/bootstrap.min.js'));
+
         if (empty($this->instance)) {
             $this->content = '';
             return $this->content;
@@ -47,9 +50,6 @@ class block_misaka extends block_base
 
         $courseid = $this->page->course->id;
         $context = context_course::instance($courseid);
-
-        $PAGE->requires->jquery();
-        $PAGE->requires->js(new moodle_url($CFG->wwwroot . '/blocks/misaka/js/bootstrap.min.js'));
 
         try {
             $message_obj = new \block_misaka\messages($context);

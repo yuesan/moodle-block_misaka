@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for (some of) mod/quiz/locallib.php.
- *
  * @package    block_misaka
  * @category   test
  * @copyright  2017 Takayuki Fuwa
@@ -33,7 +31,7 @@ global $CFG;
  * @copyright  2017 Takayuki Fuwa
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class block_misaka_test_testcase extends advanced_testcase
+class block_misaka_util_test_testcase extends advanced_testcase
 {
 
     /**
@@ -62,20 +60,20 @@ class block_misaka_test_testcase extends advanced_testcase
     /**
      * Test deleting a misaka instance.
      */
-    public function test_block_misaka_create_instance()
+    public function test_block_misaka_get_rule_classes()
     {
+        require_once '../classes/util.php';
+
         global $DB;
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $beforeblocks = $DB->count_records('block_instances');
+        $files = \block_misaka\util::get_rule_classes();
 
-        $generator = $this->getDataGenerator()->get_plugin_generator('block_misaka');
+        $expect = [
+            'forum', 'greeting', 'message', 'quiz'
+        ];
 
-        $this->assertInstanceOf('block_misaka_generator', $generator);
-        $this->assertEquals('misaka', $generator->get_blockname());
-
-        $generator->create_instance();
-        $this->assertEquals($beforeblocks + 1, $DB->count_records('block_instances'));
+        $this->assertArraySubset($expect, $files);
     }
 }

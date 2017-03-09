@@ -15,8 +15,6 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Unit tests for (some of) mod/quiz/locallib.php.
- *
  * @package    block_misaka
  * @category   test
  * @copyright  2017 Takayuki Fuwa
@@ -32,8 +30,9 @@ global $CFG;
  * @category   test
  * @copyright  2017 Takayuki Fuwa
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
+
  */
-class block_misaka_test_testcase extends advanced_testcase
+class block_misaka_quiz_testcase extends advanced_testcase
 {
 
     /**
@@ -60,22 +59,32 @@ class block_misaka_test_testcase extends advanced_testcase
     }
 
     /**
-     * Test deleting a misaka instance.
+     * Test deleting a sharedpanel instance.
      */
-    public function test_block_misaka_create_instance()
+    public function test_block_misaka_quiz()
     {
-        global $DB;
+        require_once '../classes/quiz.php';
+
+        global $DB, $SITE;
         $this->resetAfterTest(true);
         $this->setAdminUser();
 
-        $beforeblocks = $DB->count_records('block_instances');
+        // Setup a quiz with 1 standard and 1 random question.
+        $quizgenerator = $this->getDataGenerator()->get_plugin_generator('mod_quiz');
+        $quiz = $quizgenerator->create_instance(array('course' => $SITE->id, 'questionsperpage' => 3, 'grade' => 100.0));
 
-        $generator = $this->getDataGenerator()->get_plugin_generator('block_misaka');
+        $questiongenerator = $this->getDataGenerator()->get_plugin_generator('core_question');
+        $cat = $questiongenerator->create_question_category();
+        $standardq = $questiongenerator->create_question('shortanswer', null, array('category' => $cat->id));
 
-        $this->assertInstanceOf('block_misaka_generator', $generator);
-        $this->assertEquals('misaka', $generator->get_blockname());
+        quiz_add_quiz_question($standardq->id, $quiz);
+        quiz_add_random_questions($quiz, 0, $cat->id, 1, false);
 
-        $generator->create_instance();
-        $this->assertEquals($beforeblocks + 1, $DB->count_records('block_instances'));
+        $m_quiz = \block_misaka\quiz::quiz($quiz->id);
+
+        $this->assertEquals($m_quiz->id, $quiz->id);
+        $this->assertEquals($SITE->id, $m_quiz->course);
+        $this->assertEquals(3, $m_quiz->questionsperpage);
+        $this->assertEquals(100.0, $m_quiz->grade);
     }
 }

@@ -33,7 +33,7 @@ global $CFG;
  * @copyright  2017 Takayuki Fuwa
  * @license    http://www.gnu.org/copyleft/gpl.html GNU Public License
  */
-class block_misaka_test_testcase extends advanced_testcase
+class block_misaka_rules_forum_testcase extends advanced_testcase
 {
 
     /**
@@ -59,23 +59,20 @@ class block_misaka_test_testcase extends advanced_testcase
         $this->getDataGenerator()->enrol_user($this->teacher->id, $this->course->id, $this->teacherrole->id, 'manual');
     }
 
-    /**
-     * Test deleting a misaka instance.
-     */
-    public function test_block_misaka_create_instance()
+    public function test_rules_forum_get_content()
     {
-        global $DB;
+        require_once "../classes/rules/forum.php";
+
+        global $SITE, $DB;
         $this->resetAfterTest(true);
-        $this->setAdminUser();
 
-        $beforeblocks = $DB->count_records('block_instances');
+        $this->setUser($this->student);
 
-        $generator = $this->getDataGenerator()->get_plugin_generator('block_misaka');
+        $ruleObj = new \block_misaka\rules\forum();
+        $message = $ruleObj->get();
 
-        $this->assertInstanceOf('block_misaka_generator', $generator);
-        $this->assertEquals('misaka', $generator->get_blockname());
-
-        $generator->create_instance();
-        $this->assertEquals($beforeblocks + 1, $DB->count_records('block_instances'));
+        $this->assertNotEmpty($message->title);
+        $this->assertEquals("フォーラム", $message->title);
+        $this->assertNotEmpty($message->text);
     }
 }

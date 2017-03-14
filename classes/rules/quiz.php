@@ -99,7 +99,7 @@ class quiz
             $key = array_rand($quiz);
             return $quiz[$key];
         } else {
-            return $quiz;
+            return array_shift($quiz);
         }
     }
 

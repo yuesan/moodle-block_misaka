@@ -40,9 +40,6 @@ class block_misaka_util_test_testcase extends advanced_testcase
     public function setUp()
     {
         global $DB;
-        $this->resetAfterTest();
-        $this->setAdminUser();
-
         // Setup test data.
         $this->course = $this->getDataGenerator()->create_course();
 
@@ -75,5 +72,25 @@ class block_misaka_util_test_testcase extends advanced_testcase
         ];
 
         $this->assertArraySubset($expect, $files);
+    }
+
+    public function test_block_misaka_get_finished()
+    {
+        global $DB, $CFG;
+
+        require_once($CFG->dirroot . '/mod/quiz/tests/attempt_test.php');
+        require_once '../classes/rules/quiz.php';
+        $this->resetAfterTest(true);
+        $this->setUser($this->student->id);
+
+        $reflection = new \ReflectionClass(new \block_misaka\rules\quiz);
+        $method = $reflection->getMethod('get_finished');
+        $method->setAccessible(true);
+
+        $attempt = \mod_quiz_attempt_testable::setup_fake_attempt_layout(
+            123, '1,2,0,3,4,0,5,6,0');
+
+        $res = $method->invoke(new \block_misaka\rules\quiz);
+        $this->assertNotEmpty($res);
     }
 }

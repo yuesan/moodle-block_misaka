@@ -86,9 +86,9 @@ class block_misaka extends block_base
 
     public function applicable_formats()
     {
-        return array('all' => false,
-            'site' => true,
-        );
+        return [
+            'all' => true
+        ];
     }
 
     public function instance_allow_multiple()
